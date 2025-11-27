@@ -38,16 +38,20 @@ def search(string):
     string = string.lower()
     string = re.split(r'[,\s.!?;()]+', string)
     for item in string:
-        if (re.fullmatch(r'\b(\w{2,})\1\b', item)) is not None:
+        if (re.fullmatch(r'\b(\w{1,})\1\b', item)) is not None:
             result.append(item)
-    print(result,'\n')
+    if len(result) > 0:
+        print(result,'\n')
+    else:
+        print('Нужных слов не найдено!\n')
+    return result
+
 
 def file_search(path):
     try:
         with open(path, 'r', encoding='UTF8') as file:
             text = file.read()
         if len(text) > 0:
-            print(text, '\n')
             search(text)
         else:
             print("Файл пуст.\n")
