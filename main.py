@@ -7,21 +7,27 @@ from bs4 import BeautifulSoup
 def menu():
     while True:
         print("Добро пожаловать в программу для поиска слов, состоящих из двух одинаковых частей\n")
-        print("Выберите действие:\n(1) - нахождение слов в пользовательском вводе\n"
-              "(2) - нахождение слов в файле по его пути\n")
+        print("Выберите действие:\n(1) - поиск слов в пользовательском вводе\n"
+              "(2) - поиск слов в файле по его пути\n"
+              "(3) - поиск слов на странице по её url")
         option = int(input())
         options(option)
 
 def options(option):
-    inp = input()
     if option == 1:
+        print("Введите любой текст:\n")
+        inp = input()
         search(inp)
     elif option == 2:
-        file_search(inp)
+        print("Введите путь к файлу для поиска:\n")
+        path = input()
+        file_search(path)
     elif option == 3:
-        url_search(inp)
+        print("Введите ссылку на страницу для поиска:\n")
+        url = input()
+        url_search(url)
     elif option not in range(1,4):
-        print("неизвестная команда, введите цифру от 1 до 3")
+        print("неизвестная команда, введите цифру от 1 до 3\n")
         menu()
 
 def search(string):
