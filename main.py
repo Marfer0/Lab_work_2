@@ -10,8 +10,11 @@ def menu():
         print("Выберите действие:\n(1) - поиск слов в пользовательском вводе\n"
               "(2) - поиск слов в файле по его пути\n"
               "(3) - поиск слов на странице по её url")
-        option = int(input())
-        options(option)
+        try:
+            option = int(input())
+            options(option)
+        except ValueError:
+            print("Введите число от 1 до 3.\n")
 
 def options(option):
     if option == 1:
@@ -40,22 +43,41 @@ def search(string):
     print(result,'\n')
 
 def file_search(path):
-    file_path = path
-    with open(file_path, 'r', encoding='UTF8') as file:
+    try:
+        with open(path, 'r', encoding='UTF8') as file:
             text = file.read()
-    if len(text) > 0:
-        print(text,'\n')
-        search(text)
-    else:
-        print("Файл пуст или не может быть открыт.\n")
+        if len(text) > 0:
+            print(text, '\n')
+            search(text)
+        else:
+            print("Файл пуст.\n")
+    except FileNotFoundError:
+        print("Ошибка: файл не найден.\n")
+    except PermissionError:
+        print("Ошибка: нет доступа к файлу.\n")
+    except Exception as e:
+        print(f"Не удалось открыть файл: {e}\n")
 
 
 def url_search(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.content, 'html.parser')
-    text = soup.get_text(separator=' ')
-    text = ' '.join(text.split()).lower()
-    search(text)
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'html.parser')
+        text = soup.get_text(separator=' ')
+        text = ' '.join(text.split()).lower()
+        search(text)
+    except requests.exceptions.MissingSchema:
+        print("Ошибка: некорректный URL.\n")
+    except requests.exceptions.ConnectionError:
+        print("Ошибка подключения: сайт недоступен.\n")
+    except requests.exceptions.Timeout:
+        print("Ошибка: время ожидания истекло.\n")
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP ошибка: {e}\n")
+    except Exception as e:
+        print(f"Не удалось получить данные с URL: {e}\n")
 
-menu()
+
+if __name__ == '__main__':
+    menu()
