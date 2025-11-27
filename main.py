@@ -13,27 +13,27 @@ def menu():
         options(option)
 
 def options(option):
+    inp = input()
     if option == 1:
-        inp = input()
         search(inp)
     elif option == 2:
-        inp = input()
         file_search(inp)
-    elif option not in range(1,3):
+    elif option == 3:
+        url_search(inp)
+    elif option not in range(1,4):
         print("неизвестная команда, введите цифру от 1 до 3")
         menu()
 
 def search(string):
     result = []
     string = string.lower()
-    string = re.split(r'[,\s.!?;]+', string)
+    string = re.split(r'[,\s.!?;()]+', string)
     for item in string:
         if (re.fullmatch(r'\b(\w{2,})\1\b', item)) is not None:
             result.append(item)
     print(result,'\n')
 
 def file_search(path):
-    result = []
     file_path = path
     with open(file_path, 'r', encoding='UTF8') as file:
             text = file.read()
@@ -42,4 +42,14 @@ def file_search(path):
         search(text)
     else:
         print("Файл пуст или не может быть открыт.\n")
+
+
+def url_search(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, 'html.parser')
+    text = soup.get_text(separator=' ')
+    text = ' '.join(text.split()).lower()
+    search(text)
+
 menu()
